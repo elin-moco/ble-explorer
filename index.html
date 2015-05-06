@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport"
+        content="width=device-width, user-scalable=no, initial-scale=1">
+  <meta charset="utf-8"/>
+  <title>BLE Demo</title>
+  <link rel="stylesheet" href="style/headers.css" type="text/css"/>
+  <link rel="stylesheet" href="style/buttons.css" type="text/css"/>
+  <link rel="stylesheet" href="style/lists.css" type="text/css"/>
+  <link rel="stylesheet" href="style/switches.css" type="text/css"/>
+  <link rel="stylesheet" href="style/action_menu.css" type="text/css"/>
+  <link rel="stylesheet" href="main.css" type="text/css"/>
+  <!-- Specific code -->
+  <script type="text/javascript" defer src="main.js"></script>
+</head>
+<body>
+<div class="skin-organic">
+  <section role="region">
+    <header>
+      <button id="back"><span class="icon icon-back">Back</span></button>
+      <h1>BLE Demo App</h1>
+    </header>
+    <div id="devices" class="page current-page">
+      <menu class="bottom-toolbar">
+        <button id='start-search-device'>Start Discovery</button>
+        <button id='stop-search-device'>Stop Discovery</button>
+      </menu>
+      <header>
+        <h2>Discover LE Devices</h2>
+      </header>
+      <section data-type="list">
+        <ul id="device-list">
+        </ul>
+      </section>
+    </div>
+    <div id="services" class="page">
+      <header>
+        <h2>Device Status</h2>
+      </header>
+      <section data-type="list">
+        <ul id="device">
+          <li>
+            <p>Connection State</p>
+            <p id="conn-state"></p>
+          </li>
+          <li>
+            <a id="update-rssi">
+              <p>Remote RSSI</p>
+              <p id="remote-rssi"></p>
+            </a>
+          </li>
+        </ul>
+      </section>
+      <header>
+        <h2>Service List</h2>
+      </header>
+      <section data-type="list">
+        <ul id="service-list">
+        </ul>
+      </section>
+    </div>
+    <div id="characteristics" class="page">
+      <header>
+        <h2>Characteristic List</h2>
+      </header>
+      <section data-type="list">
+        <ul id="char-list">
+        </ul>
+      </section>
+    </div>
+    <div id="characteristic" class="page">
+      <menu class="bottom-toolbar">
+        <button id="start-notification">Start Notification</button>
+        <button id="stop-notification">Stop Notification</button>
+        <button id="write-char">Write Characteristic</button>
+      </menu>
+      <header>
+        <h2>Characteristic</h2>
+      </header>
+      <section data-type="list">
+        <ul id="char">
+        </ul>
+      </section>
+      <header>
+        <h2>Descriptor List</h2>
+      </header>
+      <section data-type="list">
+        <ul id="desc-list">
+        </ul>
+      </section>
+    </div>
+    <div id="descriptor" class="page">
+      <menu class="bottom-toolbar">
+        <button id="write-desc">Write Descriptor</button>
+      </menu>
+      <header>
+        <h2>Descriptor</h2>
+      </header>
+      <section data-type="list">
+        <ul id="desc">
+        </ul>
+      </section>
+    </div>
+  </section>
+</div>
+</body>
+</html>

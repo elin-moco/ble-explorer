@@ -1,0 +1,50 @@
+html, body {
+    font-size: 10px;
+    margin: 0;
+}
+
+body {
+    width: 100%;
+    height: 100%;
+}
+
+#stop-notification {
+    display: none;
+}
+
+#stop-search-device {
+    display: none;
+}
+
+.page {
+    display: none;
+    padding-top: 50px;
+    padding-bottom: 120px;
+}
+
+.page.current-page {
+    display: block;
+}
+
+#back {
+    display: none;
+}
+
+.bottom-toolbar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    padding: 10px 20px;
+    box-shadow: 0 0 3px;
+    margin: 0;
+    width: 100%;
+    box-sizing: border-box;
+    background: #FFF;
+    z-index: 100;
+}
+
+section.skin-organic[role="region"] > header:first-child, .skin-organic section[role="region"] > header:first-child {
+    position: fixed;
+    width: 100%;
+    box-shadow: 0 0 5px;
+}

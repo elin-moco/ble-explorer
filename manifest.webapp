@@ -1,0 +1,23 @@
+{
+  "name": "BLE Explorer",
+  "type": "privileged",
+  "launch_path": "/index.html",
+   "icons": {
+    "16": "/img/icons/icon16x16.png",
+    "48": "/img/icons/icon48x48.png",
+    "60": "/img/icons/icon60x60.png",
+    "128": "/img/icons/icon128x128.png"
+  },
+  "description": "BLE Explorer App",
+  "locales": {
+    "en-US": {
+      "name": "BLE Explorer",
+      "description": "BLE Explorer App"
+    }
+  },
+  "default_locale": "en-US",
+  "orientation": "default",
+  "permissions": {
+    "bluetooth":{}
+  }
+}
