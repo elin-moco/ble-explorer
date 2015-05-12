@@ -156,7 +156,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   };
 
   function addDeviceToList(device) {
-    console.log("found '" + device.name + "'");
+    console.log("found '" + device.name + "' of type '"+device.type+"'");
 
     if (device.gatt) {
       var li = document.createElement('li');
@@ -213,7 +213,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   function updateRemoteRSSI() {
     gattClient.readRemoteRssi().then(function onResolve(rssi) {
       console.log(rssi);
-      gattRemoteRSSI.textContent = rssi;
+      gattRemoteRSSI.textContent = rssi.toString() + ' dBm';
     }, function onReject(reason) {
       console.log('failed to read remote rssi: reason = ' + reason);
     });
@@ -502,7 +502,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var uint8Array = new Uint8Array(arrayBuffer);
 
     for (var i = 0, j = 0; i < str.length; i += 2, j++) {
-      uint8Array[j] = parseInt(str.substr(i, 2));
+      uint8Array[j] = parseInt(str.substr(i, 2), 16);
     }
     console.log(uint8Array);
     return arrayBuffer;
