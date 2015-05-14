@@ -150,6 +150,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   stopSearchDeviceBtn.onclick = function stopSearchDevice() {
     disconnect(function() {
       defaultAdapter.stopDiscovery().then(function onResolve() {
+//          defaultAdapter.stopLeScan(discoveryHandler).then(function onResolve() {
         console.log('--> stopDiscovery complete');
       }, function onReject(reason) {
         console.log('--> stopDiscovery failed: reason = ' + reason);
