@@ -111,6 +111,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   function deviceDiscovery() {
     defaultAdapter.startDiscovery().then(function onResolve(handle) {
+//    defaultAdapter.startLeScan([]).then(function onResolve(handle) {
       discoveryHandler = handle;
       discoveryHandler.ondevicefound = function onDeviceFound(evt) {
         //console.log('-->_onDeviceFound(): evt = ' + evt);
@@ -131,6 +132,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
         console.log(defaultAdapter.discovering);
         if (defaultAdapter.discovering == true) {
           defaultAdapter.stopDiscovery().then(function onResolve() {
+//          defaultAdapter.stopLeScan(discoveryHandler).then(function onResolve() {
             deviceDiscovery();
           }, function onReject(reason) {
             console.log('--> stopDiscovery failed: reason = ' + reason);
