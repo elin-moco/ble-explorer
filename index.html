@@ -53,55 +53,34 @@
         </ul>
       </section>
       <header>
-        <h2>Service List</h2>
+        <h2>Controls</h2>
       </header>
       <section data-type="list">
-        <ul id="service-list">
+        <ul id="controls-list">
+          <li>
+            <p>Digital In</p>
+            <p id="digi-in"></p>
+          </li>
+          <li>
+            <p>Digital Out</p>
+            <label>
+              <input type="checkbox" id="digi-out" name="digi-out" value="0">
+            </label>
+          </li>
+          <li>
+            <p>Analog In</p>
+            <p id="ana-in"></p>
+          </li>
+          <li>
+            <p>Servo</p>
+            <label>
+              <input type="range" min="0" max="163" id="servo" name="servo" value="0">
+            </label>
+          </li>
         </ul>
       </section>
     </div>
-    <div id="characteristics" class="page">
-      <header>
-        <h2>Characteristic List</h2>
-      </header>
-      <section data-type="list">
-        <ul id="char-list">
-        </ul>
-      </section>
-    </div>
-    <div id="characteristic" class="page">
-      <menu class="bottom-toolbar">
-        <button id="start-notification">Start Notification</button>
-        <button id="stop-notification">Stop Notification</button>
-        <button id="write-char">Write Characteristic</button>
-      </menu>
-      <header>
-        <h2>Characteristic</h2>
-      </header>
-      <section data-type="list">
-        <ul id="char">
-        </ul>
-      </section>
-      <header>
-        <h2>Descriptor List</h2>
-      </header>
-      <section data-type="list">
-        <ul id="desc-list">
-        </ul>
-      </section>
-    </div>
-    <div id="descriptor" class="page">
-      <menu class="bottom-toolbar">
-        <button id="write-desc">Write Descriptor</button>
-      </menu>
-      <header>
-        <h2>Descriptor</h2>
-      </header>
-      <section data-type="list">
-        <ul id="desc">
-        </ul>
-      </section>
-    </div>
+
   </section>
 </div>
 </body>

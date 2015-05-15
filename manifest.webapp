@@ -1,5 +1,5 @@
 {
-  "name": "BLE Explorer",
+  "name": "SimpleControls",
   "type": "privileged",
   "launch_path": "/index.html",
    "icons": {
@@ -8,11 +8,11 @@
     "60": "/img/icons/icon60x60.png",
     "128": "/img/icons/icon128x128.png"
   },
-  "description": "BLE Explorer App",
+  "description": "BLE Shield SimpleControls",
   "locales": {
     "en-US": {
-      "name": "BLE Explorer",
-      "description": "BLE Explorer App"
+      "name": "SimpleControls",
+      "description": "BLE Shield SimpleControls"
     }
   },
   "default_locale": "en-US",

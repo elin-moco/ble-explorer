@@ -26,14 +26,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var gattClient = null;
   var selectedService = null;
   var selectedChar = null;
+  var notifyChar = null;
   var selectedDesc = null;
   var selectedDevice = null;
+  var cccDescriptor = null;
   var bleshieldRx = null;
   var bleshieldTx = null;
   var BLESHIELD_SERVICE_UUID = '713d0000-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_TX_UUID = '713d0002-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
   var CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
+
+  var servo = document.getElementById('servo');
+  var digiOut = document.getElementById('digi-out');
 
   defaultAdapter = bluetooth.defaultAdapter;
   if (defaultAdapter) {
@@ -114,7 +119,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   function clearList(listId) {
     var list = document.getElementById(listId);
-    while (list.firstChild) list.removeChild(list.firstChild);
+    if (list) {
+      while (list.firstChild) list.removeChild(list.firstChild);
+    }
   }
 
   function deviceDiscovery() {
@@ -191,12 +198,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
           if (characteristic.value) {
             var strValue = toHexString(characteristic.value);
             console.log(strValue);
-            var valueNode = document.getElementById('characteristic')
-              .getElementsByTagName('section')[0]
-              .querySelectorAll('ul > li > a > p');
-            if (valueNode.length > 1) {
-              valueNode[1].textContent = strValue;
-            }
+//            var valueNode = document.getElementById('characteristic')
+//              .getElementsByTagName('section')[0]
+//              .querySelectorAll('ul > li > a > p');
+//            if (valueNode.length > 1) {
+//              valueNode[1].textContent = strValue;
+//            }
           }
         };
 
@@ -239,10 +246,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
     if (gattClient) {
       console.log('start to discover services');
       selectedService = null;
-      clearList('service-list');
+//      clearList('controls-list');
       for (var i in gattClient.services) {
         //              dumpGattService(gattClient.services[i]);
-        addServiceToList(gattClient.services[i]);
+//        addServiceToList(gattClient.services[i]);
+        var s = gattClient.services[i];
+        if (s.uuid == BLESHIELD_SERVICE_UUID) {
+          selectedService = s;
+          discoverCharacteristics(selectedService);
+        }
       }
       showPage('services');
     }
@@ -267,23 +279,29 @@ document.addEventListener("DOMContentLoaded", function(event) {
       discoverCharacteristics(service);
     };
     li.appendChild(a);
-    var list = document.getElementById('service-list');
+    var list = document.getElementById('controls-list');
     list.appendChild(li);
   }
 
   function discoverCharacteristics(service) {
-    if (service) {
-      selectedService = service;
-    }
     selectedChar = null;
     if (selectedService) {
       clearList('char-list');
       console.log('start to discover characteristics');
       console.log(selectedService);
       for (var i in selectedService.characteristics) {
-        addCharacteristicToList(selectedService.characteristics[i]);
+        var c = selectedService.characteristics[i];
+        if (c.uuid == BLESHIELD_RX_UUID) {
+          selectedChar = c;
+          discoverDescriptors(selectedChar);
+        }
+        if (c.uuid == BLESHIELD_TX_UUID) {
+          notifyChar = c;
+          discoverDescriptors(notifyChar);
+        }
+//        addCharacteristicToList(selectedService.characteristics[i]);
       }
-      showPage('characteristics');
+//      showPage('characteristics');
     }
   }
 
@@ -323,50 +341,52 @@ document.addEventListener("DOMContentLoaded", function(event) {
   function composeAttributes(listId, props, item) {
     clearList(listId);
     var list = document.getElementById(listId);
-    for (var name in props) {
-      var li = document.createElement('li');
-      var h = document.createElement('p');
-      h.textContent = name;
-      var p = document.createElement('p');
-      p.textContent = props[name];
-      if (name == 'Value') {
-        var a = document.createElement('a');
-        a.onclick = function() {
-          var valueElement = this.getElementsByTagName('p')[1];
-          item.readValue().then(function onResolve(value) {
-            var strValue = toHexString(value);
-            console.log('!!!!!!!!!!!!!!!! read value = ' + strValue);
-            valueElement.textContent = strValue;
-          }, function onReject(reason) {
-            console.log('readValue failed: reason = ' + reason);
-          });
-        };
-        a.appendChild(h);
-        a.appendChild(p);
-        li.appendChild(a);
+    if (list) {
+      for (var name in props) {
+        var li = document.createElement('li');
+        var h = document.createElement('p');
+        h.textContent = name;
+        var p = document.createElement('p');
+        p.textContent = props[name];
+        if (name == 'Value') {
+          var a = document.createElement('a');
+          a.onclick = function() {
+            var valueElement = this.getElementsByTagName('p')[1];
+            item.readValue().then(function onResolve(value) {
+              var strValue = toHexString(value);
+              console.log('!!!!!!!!!!!!!!!! read value = ' + strValue);
+              valueElement.textContent = strValue;
+            }, function onReject(reason) {
+              console.log('readValue failed: reason = ' + reason);
+            });
+          };
+          a.appendChild(h);
+          a.appendChild(p);
+          li.appendChild(a);
+        }
+        else {
+          li.appendChild(h);
+          li.appendChild(p);
+        }
+        list.appendChild(li);
       }
-      else {
-        li.appendChild(h);
-        li.appendChild(p);
-      }
-      list.appendChild(li);
     }
   }
 
   function discoverDescriptors(characteristic) {
-    if (characteristic) {
-      selectedChar = characteristic;
-    }
+//    if (characteristic) {
+//      selectedChar = characteristic;
+//    }
     selectedDesc = null;
-    if (selectedChar) {
+    if (characteristic) {
       clearList('desc-list');
       var props = selectedChar.properties;
       composeAttributes('char', {
-        'UUID': selectedChar.uuid,
+        'UUID': characteristic.uuid,
         'ServiceUUID': selectedService.uuid,
         'Device': selectedDevice.name + '(' + selectedDevice.address + ')',
-        'InstanceId': selectedChar.instanceId,
-        'Value': toHexString(selectedChar.value),
+        'InstanceId': characteristic.instanceId,
+        'Value': toHexString(characteristic.value),
         'Broadcast': props.broadcast,
         'Read': props.read,
         'WriteNoResponse': props.writeNoResponse,
@@ -375,13 +395,28 @@ document.addEventListener("DOMContentLoaded", function(event) {
         'Indicate': props.indicate,
         'SignedWrite': props.signedWrite,
         'ExtendedProps': props.extendedProps
-      }, selectedChar);
+      }, characteristic);
       console.log('start to discover descriptors');
-      console.log(selectedChar);
-      for (var i in selectedChar.descriptors) {
-        addDescriptorToList(selectedChar.descriptors[i]);
+      console.log(characteristic);
+      for (var i in characteristic.descriptors) {
+        if (characteristic.descriptors[i].uuid === CCCD_UUID) {
+          characteristic.startNotifications().then(function onResolve() {
+            console.log('start notification completed');
+          }, function onReject(reason) {
+            console.log('start notification failed: reason = ' + reason);
+          });
+
+          console.log('Found CCCD!!!!');
+          cccDescriptor = characteristic.descriptors[i];
+          var arrayBuffer = new ArrayBuffer(2);
+          var uint8Array = new Uint8Array(arrayBuffer);
+          uint8Array[0] = 0x01;
+          uint8Array[1] = 0x00;
+          cccDescriptor.writeValue(arrayBuffer);
+        }
+//        addDescriptorToList(selectedChar.descriptors[i]);
       }
-      showPage('characteristic');
+//      showPage('characteristic');
     }
   }
 
@@ -415,7 +450,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }, selectedDesc);
       console.log('show descriptor');
       console.log(selectedDesc);
-      showPage('descriptor');
+//      showPage('descriptor');
     }
   }
 
@@ -459,6 +494,29 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     }
   }
+  servo.onclick = function() {
+    console.info('ya');
+    var result = '03' + parseInt(this.value).toString(16) + '00';
+    var array = parseHexString(result);
+    console.log(array);
+    selectedChar.writeValue(array);
+  };
+
+  digiOut.onchange = function() {
+    console.info('yo');
+    var result = null;
+    if (this.checked) {
+      result = '010100';
+    }
+    else {
+      result = '010000';
+    }
+    if (result) {
+      var array = parseHexString(result);
+      console.log(array);
+      selectedChar.writeValue(array);
+    }
+  };
 
   startNotiBtn.onclick = function startNotiBtnClick() {
     if (defaultAdapter && gattClient) {
@@ -549,6 +607,5 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var array = parseHexString(result);
     console.log(array);
     selectedDesc.writeValue(array);
-  }
-
+  };
 }); //DOMContentLoaded
