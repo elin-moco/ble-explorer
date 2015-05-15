@@ -118,8 +118,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 
   function deviceDiscovery() {
-//    defaultAdapter.startDiscovery().then(function onResolve(handle) {
-    defaultAdapter.startLeScan([]).then(function onResolve(handle) {
+    defaultAdapter.startDiscovery().then(function onResolve(handle) {
+//    defaultAdapter.startLeScan([]).then(function onResolve(handle) {
       showStopDiscovery();
       discoveryHandler = handle;
       discoveryHandler.ondevicefound = function onDeviceFound(evt) {
@@ -140,8 +140,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         console.log('precheck device discovering: ' + defaultAdapter.discovering);
         if (defaultAdapter.discovering == true) {
-//          defaultAdapter.stopDiscovery().then(function onResolve() {
-          defaultAdapter.stopLeScan(discoveryHandler).then(function onResolve() {
+          defaultAdapter.stopDiscovery().then(function onResolve() {
+//          defaultAdapter.stopLeScan(discoveryHandler).then(function onResolve() {
             showStartDiscovery();
             deviceDiscovery();
           }, function onReject(reason) {
@@ -159,8 +159,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   stopSearchDeviceBtn.onclick = function stopSearchDevice() {
     disconnect(function() {
-//      defaultAdapter.stopDiscovery().then(function onResolve() {
-      defaultAdapter.stopLeScan(discoveryHandler).then(function onResolve() {
+      defaultAdapter.stopDiscovery().then(function onResolve() {
+//      defaultAdapter.stopLeScan(discoveryHandler).then(function onResolve() {
         showStartDiscovery();
         console.log('--> stopDiscovery complete');
       }, function onReject(reason) {
