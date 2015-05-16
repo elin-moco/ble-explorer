@@ -50,6 +50,12 @@
               <p id="remote-rssi"></p>
             </a>
           </li>
+          <li>
+            <a id="notify">
+              <p>Notification</p>
+              <p id="notify-status">Disabled</p>
+            </a>
+          </li>
         </ul>
       </section>
       <header>
@@ -59,28 +65,30 @@
         <ul id="controls-list">
           <li>
             <p>Digital In</p>
-            <p id="digi-in"></p>
+            <p> </p>
+            <input type="checkbox" name="digi-in" id="digi-in" class="toggle"/>
+            <label for="digi-out" id="digi-in-label" class="checkbox-label"></label>
           </li>
           <li>
             <p>Digital Out</p>
-            <label>
-              <input type="checkbox" id="digi-out" name="digi-out" value="0">
-            </label>
+            <p> </p>
+            <input type="checkbox" name="digi-out" id="digi-out" class="toggle"/>
+            <label for="digi-out" class="checkbox-label"></label>
           </li>
           <li>
             <p>Analog In</p>
-            <p id="ana-in"></p>
+            <p id="ana-in-val"></p>
+              <input type="checkbox" name="ana-in" id="ana-in" value="0" class="toggle">
+              <label for="ana-in" class="checkbox-label"></label>
           </li>
           <li>
             <p>Servo</p>
-            <label>
-              <input type="range" min="0" max="163" id="servo" name="servo" value="0">
-            </label>
+            <p> </p>
+            <input type="range" class="slider" min="0" max="160" step="1" id="servo" name="servo" value="0">
           </li>
         </ul>
       </section>
     </div>
-
   </section>
 </div>
 </body>
