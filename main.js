@@ -207,12 +207,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         gattClient.connect().then(function onResolve() {
           console.log("connected");
-          gattClient.discoverServices().then(function onResolve() {
-            updateRemoteRSSI();
-            discoverServices();
-          }, function onReject(reason) {
-            console.log('discover failed: reason = ' + reason);
-          });
+          discoverServices();
         }, function onReject(reason) {
           console.log('connect failed: reason = ' + reason);
         });
@@ -237,13 +232,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
   function discoverServices() {
     if (gattClient) {
-      console.log('start to discover services');
       selectedService = null;
       clearList('service-list');
-      for (var i in gattClient.services) {
-        //              dumpGattService(gattClient.services[i]);
-        addServiceToList(gattClient.services[i]);
-      }
+      console.log('start to discover services');
+      gattClient.discoverServices().then(function onResolve() {
+        updateRemoteRSSI();
+        for (var i in gattClient.services) {
+          //              dumpGattService(gattClient.services[i]);
+          addServiceToList(gattClient.services[i]);
+        }
+      }, function onReject(reason) {
+        console.log('discover failed: reason = ' + reason);
+      });
+
       showPage('services');
     }
   }
