@@ -30,6 +30,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
   var CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
 
+  var notify = document.getElementById('notify');
   var notifyStatus = document.getElementById('notify-status');
 
   var servo = document.getElementById('servo');
@@ -217,12 +218,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
 
         gattClient.connect().then(function onResolve() {
           console.log("connected");
-          gattClient.discoverServices().then(function onResolve() {
-            updateRemoteRSSI();
-            discoverServices();
-          }, function onReject(reason) {
-            console.log('discover failed: reason = ' + reason);
-          });
+          discoverServices();
         }, function onReject(reason) {
           console.log('connect failed: reason = ' + reason);
         });
@@ -249,16 +245,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
     if (gattClient) {
       console.log('start to discover services');
       selectedService = null;
-//      clearList('controls-list');
-      for (var i in gattClient.services) {
-        //              dumpGattService(gattClient.services[i]);
-//        addServiceToList(gattClient.services[i]);
-        var s = gattClient.services[i];
-        if (s.uuid == BLESHIELD_SERVICE_UUID) {
-          selectedService = s;
-          discoverCharacteristics(selectedService);
+
+      gattClient.discoverServices().then(function onResolve() {
+        updateRemoteRSSI();
+        for (var i in gattClient.services) {
+          var s = gattClient.services[i];
+          if (s.uuid == BLESHIELD_SERVICE_UUID) {
+            selectedService = s;
+            discoverCharacteristics(selectedService);
+          }
         }
-      }
+      }, function onReject(reason) {
+        console.log('discover failed: reason = ' + reason);
+      });
       showPage('services');
     }
   }
@@ -440,6 +439,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
   };
 
+  notify.onclick = discoverServices;
 
   function parseHexString(str) {
     var arrayBuffer = new ArrayBuffer(Math.ceil(str.length / 2));
