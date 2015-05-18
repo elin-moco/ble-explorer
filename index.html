@@ -4,7 +4,7 @@
   <meta name="viewport"
         content="width=device-width, user-scalable=no, initial-scale=1">
   <meta charset="utf-8"/>
-  <title>Simple Controls</title>
+  <title>Cat Feeder</title>
   <link rel="stylesheet" href="style/headers.css" type="text/css"/>
   <link rel="stylesheet" href="style/buttons.css" type="text/css"/>
   <link rel="stylesheet" href="style/lists.css" type="text/css"/>
@@ -19,7 +19,7 @@
   <section role="region">
     <header>
       <button id="back"><span class="icon icon-back">Back</span></button>
-      <h1>Simple Controls</h1>
+      <h1>Cat Feeder</h1>
     </header>
     <div id="devices" class="page current-page">
       <menu class="bottom-toolbar">
@@ -64,25 +64,25 @@
       <section data-type="list">
         <ul id="controls-list">
           <li>
-            <p>Digital In</p>
-            <p> </p>
-            <input type="checkbox" name="digi-in" id="digi-in" class="toggle"/>
-            <label for="digi-out" id="digi-in-label" class="checkbox-label"></label>
-          </li>
-          <li>
-            <p>Digital Out</p>
-            <p> </p>
-            <input type="checkbox" name="digi-out" id="digi-out" class="toggle"/>
-            <label for="digi-out" class="checkbox-label"></label>
-          </li>
-          <li>
-            <p>Analog In</p>
+            <p>Food Left</p>
             <p id="ana-in-val"></p>
               <input type="checkbox" name="ana-in" id="ana-in" value="0" class="toggle">
               <label for="ana-in" class="checkbox-label"></label>
           </li>
           <li>
-            <p>Servo</p>
+            <p>Eating</p>
+            <p> </p>
+            <input type="checkbox" name="digi-in" id="digi-in" class="toggle"/>
+            <label for="digi-out" id="digi-in-label" class="checkbox-label"></label>
+          </li>
+          <li>
+            <p>Feed Now</p>
+            <p> </p>
+            <input type="checkbox" name="digi-out" id="digi-out" class="toggle"/>
+            <label for="digi-out" class="checkbox-label"></label>
+          </li>
+          <li>
+            <p>Feed Mode</p>
             <p> </p>
             <input type="range" class="slider" min="0" max="160" step="1" id="servo" name="servo" value="0">
           </li>
