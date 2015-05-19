@@ -65,26 +65,26 @@
         <ul id="controls-list">
           <li>
             <p>Food Left</p>
-            <p id="ana-in-val"></p>
-              <input type="checkbox" name="ana-in" id="ana-in" value="0" class="toggle">
-              <label for="ana-in" class="checkbox-label"></label>
+            <p id="food-left-val">0</p>
+            <input type="checkbox" name="food-left" id="food-left" value="0" class="toggle">
+            <label for="food-left" class="checkbox-label"></label>
           </li>
           <li>
             <p>Eating</p>
-            <p> </p>
-            <input type="checkbox" name="digi-in" id="digi-in" class="toggle"/>
-            <label for="digi-out" id="digi-in-label" class="checkbox-label"></label>
+            <p id="eating-status-val">Not eating</p>
+            <input type="checkbox" name="eating-status" id="eating-status" class="toggle"/>
+            <label for="eating-status" id="eating-status-label" class="checkbox-label"></label>
           </li>
           <li>
             <p>Feed Now</p>
-            <p> </p>
-            <input type="checkbox" name="digi-out" id="digi-out" class="toggle"/>
-            <label for="digi-out" class="checkbox-label"></label>
+            <p id="feeding-status-val">Not feeding</p>
+            <input type="checkbox" name="feeding-status" id="feeding-status" class="toggle"/>
+            <label for="feeding-status" class="checkbox-label"></label>
           </li>
           <li>
             <p>Feed Mode</p>
-            <p> </p>
-            <input type="range" class="slider" min="0" max="160" step="1" id="servo" name="servo" value="0">
+            <p id="feed-mode-val">Fasting</p>
+            <input type="range" class="slider" min="0" max="4" step="1" id="feed-mode" name="feed-mode" value="0">
           </li>
         </ul>
       </section>

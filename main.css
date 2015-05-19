@@ -53,7 +53,7 @@ section.skin-organic[role="region"] > header:first-child, .skin-organic section[
     position: relative;
 }
 
-#digi-in, #digi-in-label {
+#eating-status, #eating-status-label {
     pointer-events: none;
 }
 

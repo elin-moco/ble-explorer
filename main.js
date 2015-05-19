@@ -33,12 +33,15 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var notify = document.getElementById('notify');
   var notifyStatus = document.getElementById('notify-status');
 
-  var servo = document.getElementById('servo');
-  var anaIn = document.getElementById('ana-in');
-  var digiOut = document.getElementById('digi-out');
+  var foodLeft = document.getElementById('food-left');
+  var eatingStatus = document.getElementById('eating-status');
+  var feedingStatus = document.getElementById('feeding-status');
+  var feedMode = document.getElementById('feed-mode');
 
-  var digiIn = document.getElementById('digi-in');
-  var anaInVal = document.getElementById('ana-in-val');
+  var foodLeftVal = document.getElementById('food-left-val');
+  var eatingStatusVal = document.getElementById('eating-status-val');
+  var feedingStatusVal = document.getElementById('feeding-status-val');
+  var feedModeVal = document.getElementById('feed-mode-val');
 
   defaultAdapter = bluetooth.defaultAdapter;
   if (defaultAdapter) {
@@ -202,10 +205,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
               var pin = parseInt(values[i].substr(0, 2), 16);
               var content = parseInt(values[i].substr(2, 4), 16);
               if (pin == 0x0A) {
-                digiIn.checked = content == 0x0100;
+                eatingStatus.checked = content == 0x0100;
+                eatingStatusVal.textContent = eatingStatus.checked ? 'Eating' : 'Not eating';
               }
               else if (pin == 0x0B) {
-                anaInVal.textContent = content;
+                foodLeftVal.textContent = content;
               }
             }
           }
@@ -400,31 +404,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     }
   }
-  servo.onchange = function() {
-    console.info('ya');
-    var result = '03' + parseInt(this.value).toString(16) + '00';
-    var array = parseHexString(result);
-    console.log(array);
-    selectedChar.writeValue(array);
+  feedingStatus.onclick = function() {
+    selectedChar.writeValue(parseHexString('039900'));
+    feedingStatusVal.textContent = 'Feeding';
+    setTimeout(function() {
+      selectedChar.writeValue(parseHexString('030000'));
+      feedingStatus.checked = false;
+      feedingStatusVal.textContent = 'Not feeding';
+    }, 1000);
   };
 
-  digiOut.onchange = function() {
-    console.info('yo');
-    var result = null;
-    if (this.checked) {
-      result = '010100';
-    }
-    else {
-      result = '010000';
-    }
-    if (result) {
-      var array = parseHexString(result);
-      console.log(array);
-      selectedChar.writeValue(array);
-    }
-  };
-  anaIn.onchange = function() {
-    console.info('yo');
+  foodLeft.onchange = function() {
     var result = null;
     if (this.checked) {
       result = 'A00100';
@@ -437,6 +427,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
       console.log(array);
       selectedChar.writeValue(array);
     }
+  };
+  var FEED_MODES = ['Fasting', 'Per 3 Hours', 'Per 2 Hours', 'Per 1 Hour', 'All You Can Eat'];
+  feedMode.onchange = function() {
+    console.log(FEED_MODES[this.value]);
+    feedModeVal.textContent = FEED_MODES[this.value];
   };
 
   notify.onclick = discoverServices;
