@@ -36,9 +36,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var servo = document.getElementById('servo');
   var anaIn = document.getElementById('ana-in');
   var digiOut = document.getElementById('digi-out');
-
   var digiIn = document.getElementById('digi-in');
+  var digiOutVal = document.getElementById('digi-out-val');
+  var digiInVal = document.getElementById('digi-in-val');
   var anaInVal = document.getElementById('ana-in-val');
+  var servoVal = document.getElementById('servo-val');
 
   defaultAdapter = bluetooth.defaultAdapter;
   if (defaultAdapter) {
@@ -203,6 +205,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
               var content = parseInt(values[i].substr(2, 4), 16);
               if (pin == 0x0A) {
                 digiIn.checked = content == 0x0100;
+                digiInVal.textContent = digiIn.checked ? 'High' : 'Low';
               }
               else if (pin == 0x0B) {
                 anaInVal.textContent = content;
@@ -402,6 +405,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
   servo.onchange = function() {
     console.info('ya');
+    servoVal.textContent = this.value;
     var result = '03' + parseInt(this.value).toString(16) + '00';
     var array = parseHexString(result);
     console.log(array);
@@ -413,9 +417,11 @@ document.addEventListener("DOMContentLoaded", function(event) {
     var result = null;
     if (this.checked) {
       result = '010100';
+      digiOutVal.textContent = 'High';
     }
     else {
       result = '010000';
+      digiOutVal.textContent = 'Low';
     }
     if (result) {
       var array = parseHexString(result);
