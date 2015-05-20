@@ -2,7 +2,8 @@
   "name": "CatFeeder",
   "type": "privileged",
   "launch_path": "/index.html",
-   "icons": {
+  "origin": "app://catfeeder.inspire.mozilla.com.tw",
+  "icons": {
     "16": "/img/icons/icon16x16.png",
     "48": "/img/icons/icon48x48.png",
     "60": "/img/icons/icon60x60.png",
@@ -18,6 +19,10 @@
   "default_locale": "en-US",
   "orientation": "default",
   "permissions": {
-    "bluetooth":{}
+    "video-capture": {},
+    "bluetooth": {},
+    "settings": {
+      "access": "readwrite"
+    }
   }
 }

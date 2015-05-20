@@ -21,6 +21,9 @@ body {
     padding-top: 50px;
     padding-bottom: 120px;
 }
+#container {
+    padding-bottom: 120px;
+}
 
 .page.current-page {
     display: block;

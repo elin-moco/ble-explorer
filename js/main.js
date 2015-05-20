@@ -180,7 +180,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   };
 
   function addDeviceToList(device) {
-    console.log("found '" + device.name + "' of type '"+device.type+"'");
+    console.log("found '" + device.name + "' of type '" + device.type + "'");
 
     if (device.gatt) {
       var li = document.createElement('li');
@@ -204,13 +204,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
             for (var i in values) {
               var pin = parseInt(values[i].substr(0, 2), 16);
               var content = parseInt(values[i].substr(2, 4), 16);
-              if (pin == 0x0A) {
-                eatingStatus.checked = content == 0x0100;
-                eatingStatusVal.textContent = eatingStatus.checked ? 'Eating' : 'Not eating';
-              }
-              else if (pin == 0x0B) {
-                foodLeftVal.textContent = content;
-              }
+              renderValue(pin, content);
             }
           }
         };
@@ -404,15 +398,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     }
   }
-  feedingStatus.onclick = function() {
-    selectedChar.writeValue(parseHexString('039900'));
-    feedingStatusVal.textContent = 'Feeding';
-    setTimeout(function() {
-      selectedChar.writeValue(parseHexString('030000'));
-      feedingStatus.checked = false;
-      feedingStatusVal.textContent = 'Not feeding';
-    }, 1000);
-  };
+
+  feedingStatus.onclick = feedCat;
 
   foodLeft.onchange = function() {
     var result = null;
@@ -463,4 +450,80 @@ document.addEventListener("DOMContentLoaded", function(event) {
     return str;
   }
 
+  var catEating = false;
+
+  function feedCat() {
+    selectedChar.writeValue(parseHexString('039900'));
+    feedingStatusVal.textContent = 'Feeding';
+    setTimeout(function() {
+      selectedChar.writeValue(parseHexString('030000'));
+      feedingStatus.checked = false;
+      feedingStatusVal.textContent = 'Not feeding';
+      post('http://catfeeder.inspire.mozilla.com.tw/api/feed');
+      sendChannel.send('feed');
+    }, 1000);
+  }
+
+  window.renderValue = function(pin, content) {
+    if (pin == 0x0A) {
+      eatingStatus.checked = content == 0x0100;
+      eatingStatusVal.textContent = eatingStatus.checked ? 'Eating' : 'Not eating';
+      if (!catEating && eatingStatus.checked) {
+        post('http://catfeeder.inspire.mozilla.com.tw/api/rub', function(response) {
+          console.info(response);
+          if (response.timeToFeed) {
+            feedCat();
+          }
+        });
+        sendChannel.send('rub');
+        catEating = true;
+      }
+      else {
+        catEating = false;
+        post('http://catfeeder.inspire.mozilla.com.tw/api/leave');
+        sendChannel.send('leave');
+      }
+    }
+    else if (pin == 0x0B) {
+      foodLeftVal.textContent = content;
+    }
+  };
+
+
+  window.onRtcMessage = function(msg) {
+    if ('feed' == msg) {
+      feedCat();
+    }
+  };
+
+  function post(url, callback) {
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) {
+      // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp = new XMLHttpRequest();
+    } else {
+      // code for IE6, IE5
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+        if (xmlhttp.status == 200) {
+          if (callback) {
+            callback(JSON.parse(xmlhttp.responseText));
+          }
+        }
+        else if (xmlhttp.status == 400) {
+          alert('There was an error 400')
+        }
+        else {
+          alert('something else other than 200 was returned')
+        }
+      }
+    };
+
+    xmlhttp.open('POST', url, true);
+    xmlhttp.send();
+  }
 }); //DOMContentLoaded

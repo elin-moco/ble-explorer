@@ -10,9 +10,7 @@
   <link rel="stylesheet" href="style/lists.css" type="text/css"/>
   <link rel="stylesheet" href="style/switches.css" type="text/css"/>
   <link rel="stylesheet" href="style/action_menu.css" type="text/css"/>
-  <link rel="stylesheet" href="main.css" type="text/css"/>
-  <!-- Specific code -->
-  <script type="text/javascript" defer src="main.js"></script>
+  <link rel="stylesheet" href="style/main.css" type="text/css"/>
 </head>
 <body>
 <div class="skin-organic">
@@ -42,17 +40,20 @@
         <ul id="device">
           <li>
             <p>Connection State</p>
+
             <p id="conn-state"></p>
           </li>
           <li>
             <a id="update-rssi">
               <p>Remote RSSI</p>
+
               <p id="remote-rssi"></p>
             </a>
           </li>
           <li>
             <a id="notify">
               <p>Notification</p>
+
               <p id="notify-status">Disabled</p>
             </a>
           </li>
@@ -65,31 +66,62 @@
         <ul id="controls-list">
           <li>
             <p>Food Left</p>
+
             <p id="food-left-val">0</p>
-            <input type="checkbox" name="food-left" id="food-left" value="0" class="toggle">
+            <input type="checkbox" name="food-left" id="food-left" value="0"
+                   class="toggle">
             <label for="food-left" class="checkbox-label"></label>
           </li>
           <li>
             <p>Eating</p>
+
             <p id="eating-status-val">Not eating</p>
-            <input type="checkbox" name="eating-status" id="eating-status" class="toggle"/>
-            <label for="eating-status" id="eating-status-label" class="checkbox-label"></label>
+            <input type="checkbox" name="eating-status" id="eating-status"
+                   class="toggle"/>
+            <label for="eating-status" id="eating-status-label"
+                   class="checkbox-label"></label>
           </li>
           <li>
             <p>Feed Now</p>
+
             <p id="feeding-status-val">Not feeding</p>
-            <input type="checkbox" name="feeding-status" id="feeding-status" class="toggle"/>
+            <input type="checkbox" name="feeding-status" id="feeding-status"
+                   class="toggle"/>
             <label for="feeding-status" class="checkbox-label"></label>
           </li>
           <li>
             <p>Feed Mode</p>
+
             <p id="feed-mode-val">Fasting</p>
-            <input type="range" class="slider" min="0" max="4" step="1" id="feed-mode" name="feed-mode" value="0">
+            <input type="range" class="slider" min="0" max="4" step="1"
+                   id="feed-mode" name="feed-mode" value="0">
           </li>
         </ul>
       </section>
     </div>
+    <div id='container'>
+
+      <div id='videos'>
+        <video id='localVideo' autoplay muted></video>
+        <video id='remoteVideo' autoplay></video>
+      </div>
+
+      <div id='textareas'>
+        <textarea id="dataChannelSend" disabled
+                  placeholder="Press Start, enter some text, then press Send."></textarea>
+        <textarea id="dataChannelReceive" disabled></textarea>
+      </div>
+
+      <button id="sendButton" disabled>Send</button>
+
+    </div>
   </section>
 </div>
+
+<script type="text/javascript" src='js/lib/socket.io.js'></script>
+<script type="text/javascript" src='js/lib/adapter.js'></script>
+<script type="text/javascript" src='js/rtc.js'></script>
+<script type="text/javascript" defer src="js/main.js"></script>
+
 </body>
 </html>
