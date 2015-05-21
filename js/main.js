@@ -32,6 +32,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
   var API_SERVER = 'http://' + window.location.host;
 
+  var connection = document.getElementById('connection');
   var notify = document.getElementById('notify');
   var notifyStatus = document.getElementById('notify-status');
 
@@ -471,6 +472,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
     feedModeVal.textContent = feedModeMap[mode];
   });
 
+  connection.onclick = disconnect;
   notify.onclick = discoverServices;
 
   var catEating = false;
