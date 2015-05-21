@@ -29,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var BLESHIELD_TX_UUID = '713d0002-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
   var CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
+  var API_SERVER = 'http://' + window.location.host;
 
   var notify = document.getElementById('notify');
   var notifyStatus = document.getElementById('notify-status');
@@ -415,13 +416,137 @@ document.addEventListener("DOMContentLoaded", function(event) {
       selectedChar.writeValue(array);
     }
   };
-  var FEED_MODES = ['Fasting', 'Per 3 Hours', 'Per 2 Hours', 'Per 1 Hour', 'All You Can Eat'];
-  feedMode.onchange = function() {
-    console.log(FEED_MODES[this.value]);
-    feedModeVal.textContent = FEED_MODES[this.value];
+
+  var feedModes = ['fasting', 'per_3_hours', 'per_2_hours', 'per_1_hour', 'all_you_can_eat'];
+
+  var feedModeMap = {
+    'fasting': 'Fasting',
+    'per_3_hours': 'Per 3 Hours',
+    'per_2_hours': 'Per 2 Hours',
+    'per_1_hour': 'Per 1 Hour',
+    'all_you_can_eat': 'All You Can Eat'
   };
 
+  feedMode.onchange = function() {
+    var mode = feedModes[this.value];
+    console.log(mode);
+    post(API_SERVER + '/api/configs', function(response) {
+      if (response.result == 'success') {
+        feedModeVal.textContent = feedModeMap[mode];
+        sendChannel.send('mode:' + mode);
+      }
+    }, '{"name": "feed_mode", "value": "'+mode+'"}');
+  };
+
+  get(API_SERVER + '/api/configs?name=feed_mode', function(response) {
+    var mode = 'all_you_can_eat';
+    if (response.result.length > 0) {
+      console.info(response.result);
+      mode = response.result[0].value;
+    }
+    console.info(mode);
+    feedMode.value = feedModes.indexOf(mode);
+    feedModeVal.textContent = feedModeMap[mode];
+  });
+
   notify.onclick = discoverServices;
+
+  var catEating = false;
+
+  function feedCat() {
+    selectedChar.writeValue(parseHexString('039900'));
+    feedingStatus.checked = true;
+    feedingStatusVal.textContent = 'Feeding';
+    setTimeout(function() {
+      selectedChar.writeValue(parseHexString('030000'));
+      feedingStatus.checked = false;
+      feedingStatusVal.textContent = 'Not feeding';
+      post(API_SERVER + '/api/feed');
+      sendChannel.send('feed');
+    }, 1000);
+  }
+
+  window.renderValue = function(pin, content) {
+    if (pin == 0x0A) {
+      eatingStatus.checked = content == 0x0100;
+      eatingStatusVal.textContent = eatingStatus.checked ? 'Eating' : 'Not eating';
+      if (!catEating && eatingStatus.checked) {
+        post(API_SERVER + '/api/rub', function(response) {
+          console.info(response);
+          if (response.timeToFeed) {
+            feedCat();
+          }
+        });
+        sendChannel.send('rub');
+        catEating = true;
+      }
+      else {
+        catEating = false;
+        post(API_SERVER + '/api/leave');
+        sendChannel.send('leave');
+      }
+    }
+    else if (pin == 0x0B) {
+      foodLeftVal.textContent = content;
+    }
+  };
+
+
+  window.onRtcMessage = function(msg) {
+    if ('feed' == msg) {
+      feedCat();
+    }
+    else if (msg.substr(0, 5) == 'mode:') {
+      var mode = msg.substr(5);
+      feedMode.value = feedModes.indexOf(mode);
+      feedModeVal.textContent = feedModeMap[mode];
+    }
+  };
+
+  function get(url, callback) {
+    ajax('GET', url, callback);
+  }
+
+  function post(url, callback, params) {
+    ajax('POST', url, callback, params);
+  }
+
+  function ajax(method, url, callback, params) {
+    var xmlhttp;
+
+    if (window.XMLHttpRequest) {
+      // code for IE7+, Firefox, Chrome, Opera, Safari
+      xmlhttp = new XMLHttpRequest();
+    } else {
+      // code for IE6, IE5
+      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+    }
+
+    xmlhttp.onreadystatechange = function() {
+      if (xmlhttp.readyState == XMLHttpRequest.DONE) {
+        if (xmlhttp.status == 200) {
+          if (callback) {
+            callback(JSON.parse(xmlhttp.responseText));
+          }
+        }
+        else if (xmlhttp.status == 400) {
+          alert('There was an error 400')
+        }
+        else {
+          alert('something else other than 200 was returned')
+        }
+      }
+    };
+
+    xmlhttp.open(method, url, true);
+    xmlhttp.setRequestHeader('Content-Type', 'application/json');
+    if (params) {
+      xmlhttp.send(params);
+    }
+    else {
+      xmlhttp.send();
+    }
+  }
 
   function parseHexString(str) {
     var arrayBuffer = new ArrayBuffer(Math.ceil(str.length / 2));
@@ -450,80 +575,4 @@ document.addEventListener("DOMContentLoaded", function(event) {
     return str;
   }
 
-  var catEating = false;
-
-  function feedCat() {
-    selectedChar.writeValue(parseHexString('039900'));
-    feedingStatusVal.textContent = 'Feeding';
-    setTimeout(function() {
-      selectedChar.writeValue(parseHexString('030000'));
-      feedingStatus.checked = false;
-      feedingStatusVal.textContent = 'Not feeding';
-      post('http://catfeeder.inspire.mozilla.com.tw/api/feed');
-      sendChannel.send('feed');
-    }, 1000);
-  }
-
-  window.renderValue = function(pin, content) {
-    if (pin == 0x0A) {
-      eatingStatus.checked = content == 0x0100;
-      eatingStatusVal.textContent = eatingStatus.checked ? 'Eating' : 'Not eating';
-      if (!catEating && eatingStatus.checked) {
-        post('http://catfeeder.inspire.mozilla.com.tw/api/rub', function(response) {
-          console.info(response);
-          if (response.timeToFeed) {
-            feedCat();
-          }
-        });
-        sendChannel.send('rub');
-        catEating = true;
-      }
-      else {
-        catEating = false;
-        post('http://catfeeder.inspire.mozilla.com.tw/api/leave');
-        sendChannel.send('leave');
-      }
-    }
-    else if (pin == 0x0B) {
-      foodLeftVal.textContent = content;
-    }
-  };
-
-
-  window.onRtcMessage = function(msg) {
-    if ('feed' == msg) {
-      feedCat();
-    }
-  };
-
-  function post(url, callback) {
-    var xmlhttp;
-
-    if (window.XMLHttpRequest) {
-      // code for IE7+, Firefox, Chrome, Opera, Safari
-      xmlhttp = new XMLHttpRequest();
-    } else {
-      // code for IE6, IE5
-      xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-    }
-
-    xmlhttp.onreadystatechange = function() {
-      if (xmlhttp.readyState == XMLHttpRequest.DONE) {
-        if (xmlhttp.status == 200) {
-          if (callback) {
-            callback(JSON.parse(xmlhttp.responseText));
-          }
-        }
-        else if (xmlhttp.status == 400) {
-          alert('There was an error 400')
-        }
-        else {
-          alert('something else other than 200 was returned')
-        }
-      }
-    };
-
-    xmlhttp.open('POST', url, true);
-    xmlhttp.send();
-  }
 }); //DOMContentLoaded

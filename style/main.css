@@ -33,6 +33,21 @@ body {
     display: none;
 }
 
+#rtc-status {
+    position: absolute;
+    display: block;
+    top: 20px;
+    right: 20px;
+    width: 10px;
+    height: 10px;
+    border-radius: 10px;
+    border: 1px solid #808080;
+    background: #CCCCCC;
+}
+#rtc-status.connected {
+    background: green;
+}
+
 .bottom-toolbar {
     position: fixed;
     bottom: 0;
@@ -189,4 +204,8 @@ section.skin-organic[role="region"] > header:first-child, .skin-organic section[
     content: attr(data-on);
     left: 60px;
     width: 36px;
+}
+
+#textareas {
+    display: none;
 }

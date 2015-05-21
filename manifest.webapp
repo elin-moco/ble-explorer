@@ -2,7 +2,7 @@
   "name": "CatFeeder",
   "type": "privileged",
   "launch_path": "/index.html",
-  "origin": "app://catfeeder.inspire.mozilla.com.tw",
+  "origin": "app://catfeeder.fancy.mozilla.com.tw",
   "icons": {
     "16": "/img/icons/icon16x16.png",
     "48": "/img/icons/icon48x48.png",

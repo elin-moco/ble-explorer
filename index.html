@@ -18,6 +18,7 @@
     <header>
       <button id="back"><span class="icon icon-back">Back</span></button>
       <h1>Cat Feeder</h1>
+      <span id="rtc-status"></span>
     </header>
     <div id="devices" class="page current-page">
       <menu class="bottom-toolbar">
@@ -110,9 +111,8 @@
         <textarea id="dataChannelSend" disabled
                   placeholder="Press Start, enter some text, then press Send."></textarea>
         <textarea id="dataChannelReceive" disabled></textarea>
+        <button id="sendButton" disabled>Send</button>
       </div>
-
-      <button id="sendButton" disabled>Send</button>
 
     </div>
   </section>
