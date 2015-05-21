@@ -404,7 +404,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
   }
   servo.onchange = function() {
-    console.info('ya');
     servoVal.textContent = this.value;
     var result = '03' + parseInt(this.value).toString(16) + '00';
     var array = parseHexString(result);
@@ -413,7 +412,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
   };
 
   digiOut.onchange = function() {
-    console.info('yo');
     var result = null;
     if (this.checked) {
       result = '010100';
@@ -430,7 +428,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
     }
   };
   anaIn.onchange = function() {
-    console.info('yo');
     var result = null;
     if (this.checked) {
       result = 'A00100';
