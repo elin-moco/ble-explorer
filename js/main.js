@@ -25,6 +25,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var selectedDesc = null;
   var selectedDevice = null;
   var cccDescriptor = null;
+  var CATFEEDER_ADDR = 'de:1b:10:03:1f:01';
   var BLESHIELD_SERVICE_UUID = '713d0000-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_TX_UUID = '713d0002-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
@@ -226,6 +227,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
       li.appendChild(a);
       var list = document.getElementById('device-list');
       list.appendChild(li);
+      if (device.address == CATFEEDER_ADDR) {
+        stopSearchDeviceBtn.click();
+        a.click();
+      }
     }
   }
 
@@ -254,6 +259,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
             discoverCharacteristics(selectedService);
           }
         }
+        if (!selectedService) {
+          setTimeout(discoverServices, 1000);
+          console.error('No service');
+        }
       }, function onReject(reason) {
         console.log('discover failed: reason = ' + reason);
       });
@@ -277,6 +286,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
           notifyChar = c;
           discoverDescriptors(notifyChar);
         }
+      }
+      if (!selectedChar || !notifyChar) {
+        console.error('No characteristics');
+        setTimeout(discoverServices, 1000);
       }
     }
   }
@@ -356,6 +369,10 @@ document.addEventListener("DOMContentLoaded", function(event) {
           notifyStatus.textContent = 'Enabled';
         }
       }
+      if (!cccDescriptor) {
+        console.error('No descriptors');
+        setTimeout(discoverServices, 1000);
+      }
     }
   }
 
@@ -391,6 +408,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
         }
       }, function onReject(reason) {
         console.log('disconnect failed: reason = ' + reason);
+        if (cb) {
+          cb();
+        }
       });
     }
     else {
@@ -433,7 +453,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
     post(API_SERVER + '/api/configs', function(response) {
       if (response.result == 'success') {
         feedModeVal.textContent = feedModeMap[mode];
-        sendChannel.send('mode:' + mode);
+        if (sendChannel) {
+          sendChannel.send('mode:' + mode);
+        }
       }
     }, '{"name": "feed_mode", "value": "'+mode+'"}');
   };
@@ -462,7 +484,9 @@ document.addEventListener("DOMContentLoaded", function(event) {
       feedingStatus.checked = false;
       feedingStatusVal.textContent = 'Not feeding';
       post(API_SERVER + '/api/feed');
-      sendChannel.send('feed');
+      if (sendChannel) {
+        sendChannel.send('feed');
+      }
     }, 1000);
   }
 
@@ -477,13 +501,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
             feedCat();
           }
         });
-        sendChannel.send('rub');
+        if (sendChannel) {
+          sendChannel.send('rub');
+        }
         catEating = true;
       }
       else {
         catEating = false;
         post(API_SERVER + '/api/leave');
-        sendChannel.send('leave');
+        if (sendChannel) {
+          sendChannel.send('leave');
+        }
       }
     }
     else if (pin == 0x0B) {
