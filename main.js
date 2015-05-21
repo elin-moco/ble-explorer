@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
   var CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
 
+  var rediscover = document.getElementById('rediscover');
+
   defaultAdapter = bluetooth.defaultAdapter;
   if (defaultAdapter) {
     console.log('defaultAdapter get!');
@@ -460,6 +462,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     }
   }
+
+  rediscover.onclick = discoverServices;
 
   startNotiBtn.onclick = function startNotiBtnClick() {
     if (defaultAdapter && gattClient) {
