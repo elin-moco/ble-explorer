@@ -126,7 +126,7 @@ function handleUserMediaError(error){
   }
 }
 
-var constraints = {video: {"mandatory": {"maxWidth": "640", "maxHeight": "360"}}};
+var constraints = {video: {"mandatory": {"maxWidth": "480", "maxHeight": "640"}}};
 
 getUserMedia(constraints, handleUserMedia, handleUserMediaError);
 console.log('Getting user media with constraints', constraints);
