@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var selectedDesc = null;
   var selectedDevice = null;
   var cccDescriptor = null;
-  var SIMPLE_CONTROLS_ADDR = 'de:1b:10:03:1f:01';
+  var CAT_TEASER_ADDR = 'f9:2f:d6:50:1e:a2';
   var BLESHIELD_SERVICE_UUID = '713d0000-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_TX_UUID = '713d0002-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
@@ -35,14 +35,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var notify = document.getElementById('notify');
   var notifyStatus = document.getElementById('notify-status');
 
-  var servo = document.getElementById('servo');
-  var anaIn = document.getElementById('ana-in');
-  var digiOut = document.getElementById('digi-out');
-  var digiIn = document.getElementById('digi-in');
-  var digiOutVal = document.getElementById('digi-out-val');
-  var digiInVal = document.getElementById('digi-in-val');
-  var anaInVal = document.getElementById('ana-in-val');
-  var servoVal = document.getElementById('servo-val');
+  var motionCtrl = document.getElementById('motion-ctrl');
+  var motionCtrlVal = document.getElementById('motion-ctrl-val');
+  var xAxis = document.getElementById('x-axis');
+  var xAxisVal = document.getElementById('x-axis-val');
+  var yAxis = document.getElementById('y-axis');
+  var yAxisVal = document.getElementById('y-axis-val');
 
   defaultAdapter = bluetooth.defaultAdapter;
   if (defaultAdapter) {
@@ -181,7 +179,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   };
 
   function addDeviceToList(device) {
-    console.log("found '" + device.name + "' of type '"+device.type+"'");
+    console.log("found '" + device.name + "' of type '" + device.type + "'");
 
     if (device.gatt) {
       var li = document.createElement('li');
@@ -205,13 +203,6 @@ document.addEventListener("DOMContentLoaded", function(event) {
             for (var i in values) {
               var pin = parseInt(values[i].substr(0, 2), 16);
               var content = parseInt(values[i].substr(2, 4), 16);
-              if (pin == 0x0A) {
-                digiIn.checked = content == 0x0100;
-                digiInVal.textContent = digiIn.checked ? 'High' : 'Low';
-              }
-              else if (pin == 0x0B) {
-                anaInVal.textContent = content;
-              }
             }
           }
         };
@@ -232,7 +223,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       li.appendChild(a);
       var list = document.getElementById('device-list');
       list.appendChild(li);
-      if (device.address == SIMPLE_CONTROLS_ADDR) {
+      if (device.address == CAT_TEASER_ADDR) {
         stopSearchDeviceBtn.click();
         a.click();
       }
@@ -424,43 +415,20 @@ document.addEventListener("DOMContentLoaded", function(event) {
       }
     }
   }
-  servo.onchange = function() {
-    servoVal.textContent = this.value;
-    var result = '03' + parseInt(this.value).toString(16) + '00';
+
+  xAxis.onchange = function() {
+    xAxisVal.textContent = this.value;
+    var result = '01' + intToHex(parseInt(this.value)) + '00';
     var array = parseHexString(result);
     console.log(array);
     selectedChar.writeValue(array);
   };
-
-  digiOut.onchange = function() {
-    var result = null;
-    if (this.checked) {
-      result = '010100';
-      digiOutVal.textContent = 'High';
-    }
-    else {
-      result = '010000';
-      digiOutVal.textContent = 'Low';
-    }
-    if (result) {
-      var array = parseHexString(result);
-      console.log(array);
-      selectedChar.writeValue(array);
-    }
-  };
-  anaIn.onchange = function() {
-    var result = null;
-    if (this.checked) {
-      result = 'A00100';
-    }
-    else {
-      result = 'A00000';
-    }
-    if (result) {
-      var array = parseHexString(result);
-      console.log(array);
-      selectedChar.writeValue(array);
-    }
+  yAxis.onchange = function() {
+    yAxisVal.textContent = this.value;
+    var result = '02' + intToHex(parseInt(this.value)) + '00';
+    var array = parseHexString(result);
+    console.log(array);
+    selectedChar.writeValue(array);
   };
 
   connection.onclick = disconnect;
@@ -477,20 +445,93 @@ document.addEventListener("DOMContentLoaded", function(event) {
     return arrayBuffer;
   }
 
+  function intToHex(val) {
+    var b = val.toString(16);
+    if (b.length == 1) {
+      return '0' + 'b';
+    }
+    return b;
+  }
+
   function toHexString(arrayBuffer) {
     var str = '';
     if (arrayBuffer) {
       console.log(arrayBuffer);
       var uint8Array = new Uint8Array(arrayBuffer);
       for (var i = 0; i < uint8Array.length; i++) {
-        var b = uint8Array[i].toString(16);
-        if (b.length == 1) {
-          str += '0'
-        }
-        str += b;
+        str += intToHex(uint8Array[i]);
       }
     }
     return str;
   }
 
+  window.MovingAverage = (function(len) {
+    var length = 5;
+    var average = 0;
+    if (len) {
+      length = len;
+    }
+    var history = [];
+    var move = function(value) {
+      history.push(value);
+      if (history.length < length) {
+        return null;
+      }
+      else {
+        history.shift();
+        average = history.reduce(function(sum, current) {
+          return sum + current;
+        }) / length;
+        return average;
+      }
+    };
+    return {
+      move: move,
+      value: function() {
+        return average;
+      }
+    }
+  });
+  motionCtrl.onclick = function() {
+    motionCtrlVal.textContent = this.checked ? 'Enabled' : 'Disabled';
+  };
+  var CHECK_INTERVAL = 2;
+  var eventCount = 0;
+  var movAvgB = MovingAverage();
+  var movAvgG = MovingAverage();
+  window.addEventListener('deviceorientation', function(e) {
+    if (eventCount > CHECK_INTERVAL) {
+      eventCount = 0;
+      if (motionCtrl.checked) {
+        movAvgB.move(e.beta);
+        movAvgG.move(e.gamma);
+      }
+    }
+    else {
+      eventCount++;
+    }
+  }, true);
+  setInterval(function() {
+    if (motionCtrl.checked) {
+      var x = movAvgG.value();
+      var y = movAvgB.value();
+      x = (x > 45) ? 45 : x;
+      x = (x < -45) ? -45 : x;
+      y = (y > 135) ? 135 : y;
+      y = (y < 45) ? 45 : y;
+      x += 80;
+      y -= 45;
+      x = Math.round(x);
+      y = Math.round(y);
+      console.log([x, y]);
+      yAxis.value = y;
+      yAxis.value = y;
+      xAxisVal.textContent = x;
+      yAxisVal.textContent = y;
+      var result = '01' + intToHex(parseInt(x)) + '0002' + intToHex(parseInt(y)) + '00';
+      var array = parseHexString(result);
+//      console.log(array);
+      selectedChar.writeValue(array);
+    }
+  }, 1000);
 }); //DOMContentLoaded

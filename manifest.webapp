@@ -1,5 +1,5 @@
 {
-  "name": "SimpleControls",
+  "name": "CatTeaser",
   "type": "privileged",
   "launch_path": "/index.html",
    "icons": {
@@ -8,11 +8,11 @@
     "60": "/img/icons/icon60x60.png",
     "128": "/img/icons/icon128x128.png"
   },
-  "description": "BLE Shield SimpleControls",
+  "description": "Cat Teaser Demo App",
   "locales": {
     "en-US": {
-      "name": "SimpleControls",
-      "description": "BLE Shield SimpleControls"
+      "name": "CatTeaser",
+      "description": "Cat Teaser Demo App"
     }
   },
   "default_locale": "en-US",
