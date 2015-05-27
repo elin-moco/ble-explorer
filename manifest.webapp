@@ -4,10 +4,9 @@
   "launch_path": "/index.html",
   "origin": "app://catfeeder.fancy.mozilla.com.tw",
   "icons": {
-    "16": "/img/icons/icon16x16.png",
-    "48": "/img/icons/icon48x48.png",
-    "60": "/img/icons/icon60x60.png",
-    "128": "/img/icons/icon128x128.png"
+    "16": "/img/icons/icon_16.png",
+    "48": "/img/icons/icon_48.png",
+    "128": "/img/icons/icon_128.png"
   },
   "description": "CatFeeder demo app",
   "locales": {

@@ -519,6 +519,14 @@ document.addEventListener("DOMContentLoaded", function(event) {
     else if (pin == 0x0B) {
       foodLeftVal.textContent = content;
     }
+    else if (pin == 0x01) {
+      if (content == 0x0100) {
+        selectedChar.writeValue(parseHexString('010100'));
+      }
+      else {
+        selectedChar.writeValue(parseHexString('010000'));
+      }
+    }
   };
 
 
