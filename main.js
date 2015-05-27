@@ -511,7 +511,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
       eventCount++;
     }
   }, true);
-  setInterval(function() {
+
+  function updateCoords() {
     if (motionCtrl.checked) {
       var x = movAvgG.value();
       var y = movAvgB.value();
@@ -519,12 +520,12 @@ document.addEventListener("DOMContentLoaded", function(event) {
       x = (x < -45) ? -45 : x;
       y = (y > 135) ? 135 : y;
       y = (y < 45) ? 45 : y;
-      x += 80;
+      x += 45;
       y -= 45;
       x = Math.round(x);
       y = Math.round(y);
       console.log([x, y]);
-      yAxis.value = y;
+      xAxis.value = x;
       yAxis.value = y;
       xAxisVal.textContent = x;
       yAxisVal.textContent = y;
@@ -533,5 +534,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
 //      console.log(array);
       selectedChar.writeValue(array);
     }
-  }, 1000);
+  }
+
+  var start = null;
+  function step(timestamp) {
+    if (!start) start = timestamp;
+    var progress = timestamp - start;
+    if (progress > 500) {
+      start = null;
+      updateCoords();
+    }
+    window.requestAnimationFrame(step);
+  }
+  window.requestAnimationFrame(step);
 }); //DOMContentLoaded
