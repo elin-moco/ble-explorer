@@ -25,7 +25,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var selectedDesc = null;
   var selectedDevice = null;
   var cccDescriptor = null;
-  var CAT_TEASER_ADDR = 'f9:2f:d6:50:1e:a2';
+  var CAT_TEASER_ADDR = 'd0:6a:cf:58:ee:bd';
+  //var CAT_TEASER_ADDR = 'f9:2f:d6:50:1e:a2';
   var BLESHIELD_SERVICE_UUID = '713d0000-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_TX_UUID = '713d0002-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
@@ -35,6 +36,8 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var notify = document.getElementById('notify');
   var notifyStatus = document.getElementById('notify-status');
 
+  var laser = document.getElementById('laser');
+  var laserVal = document.getElementById('laser-val');
   var motionCtrl = document.getElementById('motion-ctrl');
   var motionCtrlVal = document.getElementById('motion-ctrl-val');
   var xAxis = document.getElementById('x-axis');
@@ -495,6 +498,19 @@ document.addEventListener("DOMContentLoaded", function(event) {
   motionCtrl.onclick = function() {
     motionCtrlVal.textContent = this.checked ? 'Enabled' : 'Disabled';
   };
+  laser.onclick = function() {
+    laserVal.textContent = this.checked ? 'On' : 'Off';
+    var result = '10';
+    if (this.checked) {
+      result += '0100';
+    }
+    else {
+      result += '0000';
+    }
+    var array = parseHexString(result);
+    console.log(array);
+    selectedChar.writeValue(array);
+  };
   var CHECK_INTERVAL = 2;
   var eventCount = 0;
   var movAvgB = MovingAverage();
@@ -520,7 +536,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
       x = (x < -45) ? -45 : x;
       y = (y > 135) ? 135 : y;
       y = (y < 45) ? 45 : y;
-      x += 45;
+      x += 90;
       y -= 45;
       x = Math.round(x);
       y = Math.round(y);
@@ -540,7 +556,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   function step(timestamp) {
     if (!start) start = timestamp;
     var progress = timestamp - start;
-    if (progress > 500) {
+    if (progress > 300) {
       start = null;
       updateCoords();
     }

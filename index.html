@@ -66,22 +66,27 @@
       <section data-type="list">
         <ul id="controls-list">
           <li>
+            <p>Laser</p>
+            <p id="laser-val">Off</p>
+            <input type="checkbox" name="laser" id="laser"
+                   class="toggle"/>
+            <label for="laser" id="laser-label"
+                   class="checkbox-label"></label>
+          </li>
+          <li>
             <p>X Axis</p>
-
             <p id="x-axis-val">0</p>
             <input type="range" class="slider" min="0" max="160"
                    id="x-axis" name="x-axis" value="0">
           </li>
           <li>
             <p>Y Axis</p>
-
             <p id="y-axis-val">0</p>
             <input type="range" class="slider" min="0" max="160"
                    id="y-axis" name="y-axis" value="0">
           </li>
           <li>
             <p>Motion Control</p>
-
             <p id="motion-ctrl-val">Disabled</p>
             <input type="checkbox" name="motion-ctrl" id="motion-ctrl"
                    class="toggle"/>
