@@ -1,6 +1,6 @@
 {
   "name": "BLE Explorer",
-  "type": "privileged",
+  "type": "certified",
   "launch_path": "/index.html",
    "icons": {
     "16": "/img/icons/icon_16.png",
