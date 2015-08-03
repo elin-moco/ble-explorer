@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", function(event) {
   var BLESHIELD_TX_UUID = '713d0002-503e-4c75-ba94-3148f18d941e';
   var BLESHIELD_RX_UUID = '713d0003-503e-4c75-ba94-3148f18d941e';
   var CCCD_UUID = '00002902-0000-1000-8000-00805f9b34fb';
+  var found_device_addrs = [];
 
   var rediscover = document.getElementById('rediscover');
 
@@ -120,13 +121,17 @@ document.addEventListener("DOMContentLoaded", function(event) {
   }
 
   function deviceDiscovery() {
+    found_device_addrs = [];
 //    defaultAdapter.startDiscovery().then(function onResolve(handle) {
     defaultAdapter.startLeScan([]).then(function onResolve(handle) {
       showStopDiscovery();
       discoveryHandler = handle;
       discoveryHandler.ondevicefound = function onDeviceFound(evt) {
         //console.log('-->_onDeviceFound(): evt = ' + evt);
-        addDeviceToList(evt.device);
+        if (found_device_addrs.indexOf(evt.device.address) < 0) {
+          addDeviceToList(evt.device);
+          found_device_addrs.push(evt.device.address);
+        }
       }; // ondevice found
     }, function onReject(reason) {
       console.log('--> startDiscovery failed: reason = ' + reason);
